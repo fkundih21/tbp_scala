@@ -1,0 +1,13 @@
+# Mac
+.DS_Store
+
+# Dotnet / C#
+bin/
+obj/
+.vs/
+*.user
+
+# Android / Kotlin
+.gradle
+build/
+local.properties
