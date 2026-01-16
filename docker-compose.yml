@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # 1. BAZA PODATAKA
+  db:
+    image: postgres:16
+    container_name: scala_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: health_app
+    ports:
+      - "5432:5432"
+    volumes:
+      # Ovo automatski pokreće tvoju SQL skriptu pri prvom paljenju!
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # 2. C# BACKEND
+  api:
+    build:
+      context: ./backend/ScalaAPI
+      dockerfile: Dockerfile
+    container_name: scala_api
+    depends_on:
+      - db
+    ports:
+      - "5059:8080" # Mapiramo vanjski port 5059 na unutarnji 8080
+    environment:
+      # Pazi ovo: Host više nije 'localhost' nego 'db' (ime servisa gore)
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=health_app;Username=postgres;Password=password
